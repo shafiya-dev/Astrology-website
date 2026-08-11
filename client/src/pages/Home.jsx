@@ -19,14 +19,18 @@ const Home = () => {
       className="min-h-screen font-sans"
     >
       {/* Hero Section */}
-      <section className="relative pt-32 pb-24 overflow-hidden text-center">
-        <div className="hero-circle"></div>
+      <section 
+        className="relative pt-40 pb-20 overflow-hidden text-center bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/assets/cosmic-bg.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-primary/70 backdrop-blur-[1px]"></div>
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-primary to-transparent"></div>
         
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="px-6 max-w-4xl mx-auto z-10 flex flex-col items-center"
+          className="px-6 max-w-4xl mx-auto z-10 relative flex flex-col items-center"
         >
           <p className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">
             VEDIC ASTROLOGY &bull; NUMEROLOGY &bull; PALMISTRY &bull; VASTU
@@ -49,7 +53,7 @@ const Home = () => {
       </section>
 
       {/* Areas of Guidance */}
-      <section className="py-20 px-6">
+      <section className="pt-10 pb-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold">Areas of Guidance</h2>

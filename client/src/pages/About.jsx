@@ -28,7 +28,7 @@ const About = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="pt-24 min-h-screen"
+      className="pt-24 min-h-screen cosmic-bg"
     >
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -99,7 +99,7 @@ const About = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: idx * 0.1 }}
             whileHover={{ y: -5 }}
-            className="bg-card-bg p-8 rounded-xl text-center border border-transparent hover:border-accent/30 transition-colors"
+            className="glass-card p-8 rounded-xl text-center hover:border-accent/30 transition-all hover:scale-[1.02]"
           >
             <h3 className="text-4xl font-bold text-accent mb-3">
               <AnimatedCounter to={stat.to} suffix={stat.suffix} decimals={stat.decimals} />

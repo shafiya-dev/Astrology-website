@@ -16,7 +16,7 @@ const Portfolio = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="pt-24 pb-24 min-h-screen"
+      className="pt-24 pb-24 min-h-screen cosmic-bg"
     >
       <div className="max-w-6xl mx-auto px-6">
         <motion.div 
@@ -41,7 +41,7 @@ const Portfolio = () => {
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               className="flex flex-col group cursor-pointer"
             >
-              <div className="rounded-2xl overflow-hidden aspect-[4/3] mb-4">
+              <div className="rounded-2xl overflow-hidden aspect-[4/3] mb-4 border border-white/10 shadow-2xl">
                 <img 
                   src={item.src} 
                   alt={item.title} 

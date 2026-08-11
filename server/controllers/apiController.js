@@ -4,6 +4,7 @@ const Testimonial = require('../models/Testimonial');
 const Admin = require('../models/Admin');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
+const Otp = require('../models/Otp');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -43,7 +44,8 @@ exports.userRegister = async (req, res) => {
 
 exports.userLogin = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password: rawPassword } = req.body;
+    const password = rawPassword.trim();
     
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' });
@@ -54,11 +56,15 @@ exports.userLogin = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(404).json({ message: 'Account not found' });
     }
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+    if (!isMatch && password !== user.password) {
+      return res.status(401).json({ message: 'Incorrect password' });
+    }
+    if (!isMatch && password === user.password) {
+      user.password = await bcrypt.hash(password, 10);
+      await user.save();
     }
     const token = jwt.sign({ id: user._id, email: user.email, name: user.name, role: 'user' }, process.env.JWT_SECRET || 'your_jwt_secret_key', { expiresIn: '7d' });
     res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: 'user' } });
@@ -67,32 +73,71 @@ exports.userLogin = async (req, res) => {
   }
 };
 
-exports.changePassword = async (req, res) => {
+exports.sendOtp = async (req, res) => {
   try {
-    const { oldPassword, newPassword } = req.body;
-    const userId = req.admin.id; // from auth middleware
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ message: 'Phone number is required' });
 
+    const user = await User.findOne({ phone }) || await Admin.findOne({ phone });
+    if (!user) return res.status(404).json({ message: 'No account found with this phone number' });
+
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // In a real app, send OTP via SMS here
+    console.log(`[MOCK SMS] OTP for ${phone} is: ${otpCode}`);
+
+    await Otp.findOneAndDelete({ phone }); // Remove existing OTP
+    await Otp.create({ phone, otp: otpCode });
+
+    res.status(200).json({ message: 'OTP sent successfully' });
+  } catch (error) {
+    console.error('Send OTP error:', error);
+    res.status(500).json({ error: 'Failed to send OTP' });
+  }
+};
+
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { phone, otp } = req.body;
+    if (!phone || !otp) return res.status(400).json({ message: 'Phone and OTP are required' });
+
+    const existingOtp = await Otp.findOne({ phone, otp });
+    if (!existingOtp) return res.status(400).json({ message: 'Invalid or expired OTP' });
+
+    res.status(200).json({ message: 'OTP verified successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to verify OTP' });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { phone, otp, newPassword } = req.body;
+    
+    if (!phone || !otp || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
     if (newPassword.length < 6) {
       return res.status(400).json({ message: 'New password must be at least 6 characters long' });
     }
 
-    let account = await User.findById(userId) || await Admin.findById(userId);
-    
-    if (!account) {
-      return res.status(404).json({ message: 'User not found' });
+    const existingOtp = await Otp.findOne({ phone, otp });
+    if (!existingOtp) {
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
     }
 
-    const isMatch = await bcrypt.compare(oldPassword, account.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Incorrect old password' });
-    }
+    let account = await User.findOne({ phone }) || await Admin.findOne({ phone });
+    if (!account) return res.status(404).json({ message: 'Account not found' });
 
     account.password = await bcrypt.hash(newPassword, 10);
     await account.save();
+    
+    await Otp.deleteOne({ _id: existingOtp._id });
 
-    res.status(200).json({ message: 'Password changed successfully' });
+    res.status(200).json({ message: 'Password reset successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to change password' });
+    console.error('Password reset error:', error);
+    res.status(500).json({ error: 'Failed to reset password' });
   }
 };
 
@@ -118,7 +163,8 @@ exports.getTestimonials = async (req, res) => {
 
 exports.adminLogin = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password: rawPassword } = req.body;
+    const password = rawPassword.trim();
     
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' });
@@ -132,22 +178,26 @@ exports.adminLogin = async (req, res) => {
     // Auto-create admin if it doesn't exist to satisfy the specific credentials request
     if (!admin && email === 'admin@gmail.com' && password === 'admin@123') {
       const hashedPassword = await bcrypt.hash('admin@123', 10);
-      admin = await Admin.create({ email: 'admin@gmail.com', password: hashedPassword });
+      admin = await Admin.create({ email: 'admin@gmail.com', phone: '9999999999', password: hashedPassword });
     } else if (admin && email === 'admin@gmail.com' && password === 'admin@123') {
       // If admin exists but password might be the old 'admin', let's update it to 'admin@123' if it matches the old one.
       const isOldMatch = await bcrypt.compare('admin', admin.password);
-      if (isOldMatch) {
+      if (isOldMatch || admin.password === 'admin') {
         admin.password = await bcrypt.hash('admin@123', 10);
         await admin.save();
       }
     }
 
     if (!admin) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(404).json({ message: 'Account not found' });
     }
     const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    if (!isMatch && password !== admin.password) {
+      return res.status(401).json({ message: 'Incorrect password' });
+    }
+    if (!isMatch && password === admin.password) {
+      admin.password = await bcrypt.hash(password, 10);
+      await admin.save();
     }
     const token = jwt.sign({ id: admin._id, role: 'admin' }, process.env.JWT_SECRET || 'your_jwt_secret_key', { expiresIn: '1d' });
     res.status(200).json({ token, user: { id: admin._id, name: 'Admin', email: admin.email, role: 'admin' } });
@@ -210,6 +260,7 @@ exports.seedDatabase = async (req, res) => {
       const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'admin', 10);
       await Admin.create({
         email: process.env.ADMIN_EMAIL || 'admin@shwetaakapoorastrology.com',
+        phone: '9999999999',
         password: hashedPassword,
       });
     }

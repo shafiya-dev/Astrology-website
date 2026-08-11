@@ -9,7 +9,14 @@ const Footer = () => {
           <span className="hidden md:inline">•</span>
           <a href="mailto:contact@shwetaakapoorastrology.com" className="hover:text-accent transition-colors">contact@shwetaakapoorastrology.com</a>
           <span className="hidden md:inline">•</span>
-          <span>Nashik, Maharashtra</span>
+          <a 
+            href="https://maps.google.com/?q=204,+Om+Sai+Complex,+College+Road,+Nashik,+Maharashtra" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:text-accent transition-colors cursor-pointer"
+          >
+            204, Om Sai Complex, Nashik, Maharashtra
+          </a>
         </div>
 
         <p className="text-xs text-text-muted">

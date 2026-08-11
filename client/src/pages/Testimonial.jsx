@@ -31,7 +31,7 @@ const Testimonial = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="pt-24 pb-24 min-h-screen"
+      className="pt-24 pb-24 min-h-screen cosmic-bg"
     >
       <div className="max-w-6xl mx-auto px-6">
         <motion.div 
@@ -55,7 +55,7 @@ const Testimonial = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ scale: 1.02, boxShadow: "0 10px 30px -10px rgba(212, 169, 74, 0.2)" }}
-              className="bg-card-bg p-8 rounded-2xl flex flex-col h-full border border-white/5 hover:border-accent/30 transition-colors shadow-lg"
+              className="glass-card p-8 rounded-2xl flex flex-col h-full border-white/5 hover:border-accent/30 transition-all shadow-xl"
             >
               <div className="flex items-center gap-1 mb-6">
                 {[...Array(5)].map((_, i) => (

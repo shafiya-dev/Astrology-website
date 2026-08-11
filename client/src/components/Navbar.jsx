@@ -1,17 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, User as UserIcon } from 'lucide-react';
-
+import { toast } from 'react-hot-toast';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  
-  // Password modal states
-  const [pwdForm, setPwdForm] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
-  const [pwdStatus, setPwdStatus] = useState({ type: '', message: '' });
-  const [pwdLoading, setPwdLoading] = useState(false);
 
   const dropdownRef = useRef(null);
 
@@ -43,40 +37,11 @@ const Navbar = () => {
     localStorage.removeItem('user');
     setUser(null);
     setShowDropdown(false);
+    toast.success('Logged out successfully');
     navigate('/login');
   };
 
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-    if (pwdForm.newPassword !== pwdForm.confirmPassword) {
-      return setPwdStatus({ type: 'error', message: 'New passwords do not match' });
-    }
-    setPwdLoading(true);
-    setPwdStatus({ type: '', message: '' });
 
-    try {
-      const res = await fetch('http://localhost:5000/api/change-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ oldPassword: pwdForm.oldPassword, newPassword: pwdForm.newPassword })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setPwdStatus({ type: 'success', message: 'Password updated successfully!' });
-        setPwdForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
-        setTimeout(() => setShowPasswordModal(false), 2000);
-      } else {
-        setPwdStatus({ type: 'error', message: data.message || 'Failed to update password' });
-      }
-    } catch (err) {
-      setPwdStatus({ type: 'error', message: 'Server error occurred' });
-    } finally {
-      setPwdLoading(false);
-    }
-  };
 
   const links = [
     { name: 'Home', path: '/' },
@@ -90,7 +55,7 @@ const Navbar = () => {
   return (
     <header className="fixed w-full z-50 bg-primary/95 backdrop-blur-md py-4 shadow-sm border-b border-white/5">
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <NavLink to="/" className="text-xl font-semibold text-accent tracking-wide">
+        <NavLink to="/" className="text-xl font-semibold text-accent tracking-wide hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(227,181,42,0.8)] transition-all duration-300">
           Aacharya Shwetaa Kapoor
         </NavLink>
         
@@ -100,17 +65,22 @@ const Navbar = () => {
             <NavLink 
               key={link.path} 
               to={link.path}
-              className={({ isActive }) => `text-sm font-medium transition-colors ${isActive ? 'text-accent' : 'text-text hover:text-accent'}`}
+              className={({ isActive }) => `relative pb-1 text-sm font-medium transition-all duration-300 group ${isActive ? 'text-accent' : 'text-text hover:text-accent'}`}
             >
-              {link.name}
+              {({ isActive }) => (
+                <>
+                  {link.name}
+                  <span className={`absolute bottom-0 left-0 w-full h-[2px] bg-accent transition-transform duration-300 origin-left ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+                </>
+              )}
             </NavLink>
           ))}
           {user && user.role === 'admin' ? (
-            <NavLink to="/admin/messages" className="bg-white/10 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-white/20 transition-colors text-sm ml-4">
+            <NavLink to="/admin/messages" className="bg-gradient-to-r from-[#d4a94a] to-[#e3b52a] text-primary px-6 py-2.5 rounded-full font-bold shadow-[0_0_15px_rgba(227,181,42,0.4)] hover:shadow-[0_0_25px_rgba(227,181,42,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 text-sm ml-4 border border-white/20">
               Admin Dashboard
             </NavLink>
           ) : (
-            <NavLink to="/contact" className="bg-accent text-primary px-6 py-2.5 rounded-full font-semibold hover:bg-accent-hover transition-colors text-sm ml-4">
+            <NavLink to="/contact" className="bg-accent text-primary px-6 py-2.5 rounded-full font-semibold hover:bg-accent-hover hover:scale-105 hover:shadow-[0_0_15px_rgba(227,181,42,0.4)] active:scale-95 transition-all duration-300 text-sm ml-4">
               Book Consultation
             </NavLink>
           )}
@@ -141,12 +111,7 @@ const Navbar = () => {
                   >
                     My Account & Notifications
                   </NavLink>
-                  <button 
-                    onClick={() => { setShowDropdown(false); setShowPasswordModal(true); }}
-                    className="px-4 py-3 text-sm text-left text-text hover:bg-white/5 transition-colors"
-                  >
-                    Change Password
-                  </button>
+
                   <button 
                     onClick={handleLogout}
                     className="px-4 py-3 text-sm text-left text-red-400 hover:bg-white/5 transition-colors"
@@ -157,7 +122,7 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <NavLink to="/login" className="text-sm font-medium text-text hover:text-accent ml-6 border-l border-white/20 pl-6 transition-colors">
+            <NavLink to="/login" className="text-sm font-medium text-text hover:text-accent ml-6 border-l border-white/20 pl-6 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_5px_rgba(227,181,42,0.5)]">
               Login
             </NavLink>
           )}
@@ -204,9 +169,7 @@ const Navbar = () => {
               >
                 My Account
               </NavLink>
-              <button onClick={() => { setIsOpen(false); setShowPasswordModal(true); }} className="text-base text-text hover:text-accent">
-                Change Password
-              </button>
+
               <button onClick={() => { handleLogout(); setIsOpen(false); }} className="text-base text-red-400 hover:text-red-300">
                 Logout
               </button>
@@ -219,71 +182,7 @@ const Navbar = () => {
         </nav>
       )}
 
-      {/* Change Password Modal */}
-      {showPasswordModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-8">
-          <div className="bg-card-bg border border-white/10 rounded-2xl p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold mb-6 text-white">Change Password</h3>
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm text-text-muted mb-2">Current Password</label>
-                <input 
-                  type="password" 
-                  required
-                  value={pwdForm.oldPassword}
-                  onChange={(e) => setPwdForm({...pwdForm, oldPassword: e.target.value})}
-                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-2.5 text-text focus:outline-none focus:border-accent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-text-muted mb-2">New Password</label>
-                <input 
-                  type="password" 
-                  required
-                  minLength="6"
-                  value={pwdForm.newPassword}
-                  onChange={(e) => setPwdForm({...pwdForm, newPassword: e.target.value})}
-                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-2.5 text-text focus:outline-none focus:border-accent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-text-muted mb-2">Confirm New Password</label>
-                <input 
-                  type="password" 
-                  required
-                  minLength="6"
-                  value={pwdForm.confirmPassword}
-                  onChange={(e) => setPwdForm({...pwdForm, confirmPassword: e.target.value})}
-                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-2.5 text-text focus:outline-none focus:border-accent"
-                />
-              </div>
 
-              {pwdStatus.message && (
-                <p className={`text-sm text-center ${pwdStatus.type === 'error' ? 'text-red-400' : 'text-green-400'}`}>
-                  {pwdStatus.message}
-                </p>
-              )}
-
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button 
-                  type="button"
-                  onClick={() => setShowPasswordModal(false)}
-                  className="flex-1 px-6 py-2.5 rounded-full font-semibold border border-white/20 text-text hover:bg-white/5 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  disabled={pwdLoading}
-                  className="flex-1 px-6 py-2.5 rounded-full font-semibold bg-accent text-primary hover:bg-accent-hover transition-colors"
-                >
-                  {pwdLoading ? 'Saving...' : 'Save Password'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </header>
   );
 };

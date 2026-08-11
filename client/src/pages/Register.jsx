@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 const Register = () => {
   const [formData, setFormData] = useState({ 
@@ -60,7 +61,7 @@ const Register = () => {
       const data = await res.json();
       
       if (res.ok) {
-        // Redirect to login after successful registration, passing intended destination
+        toast.success('Account created successfully!');
         navigate('/login', { state: { from: location.state?.from } });
       } else {
         setError(data.message || 'Registration failed');
@@ -73,51 +74,54 @@ const Register = () => {
   };
 
   return (
-    <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
-      <div className="max-w-md w-full px-6">
-        <div className="bg-card-bg p-8 rounded-2xl border border-white/10 shadow-2xl">
+    <div className="pt-32 pb-24 min-h-screen flex items-center justify-center cosmic-bg relative">
+      <div className="max-w-md w-full px-6 relative z-10">
+        <div className="glass-card p-8 rounded-2xl animate-fade-in">
           <h2 className="text-3xl font-bold text-center mb-2">Create Account</h2>
           <p className="text-text-muted text-center mb-8">Join us for personalized guidance</p>
           
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm text-text-muted mb-2">Full Name</label>
+              <label className="block text-sm text-text-muted mb-2 font-medium">Full Name</label>
               <input 
                 type="text" 
                 name="name" 
                 required
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-2.5 text-text focus:outline-none focus:border-accent transition-colors"
+                className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none"
+                placeholder="Enter your name"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-text-muted mb-2">Email Address</label>
+              <label className="block text-sm text-text-muted mb-2 font-medium">Email Address</label>
               <input 
                 type="email" 
                 name="email" 
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-2.5 text-text focus:outline-none focus:border-accent transition-colors"
+                className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none"
+                placeholder="Enter your email"
               />
             </div>
             
             <div>
-              <label className="block text-sm text-text-muted mb-2">Phone Number</label>
+              <label className="block text-sm text-text-muted mb-2 font-medium">Phone Number</label>
               <input 
                 type="tel" 
                 name="phone" 
                 required
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full bg-transparent border border-white/20 rounded-md px-4 py-2.5 text-text focus:outline-none focus:border-accent transition-colors"
+                className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none"
+                placeholder="10-digit mobile number"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-text-muted mb-2">Password</label>
+              <label className="block text-sm text-text-muted mb-2 font-medium">Password</label>
               <div className="relative">
                 <input 
                   type={showPassword ? "text" : "password"} 
@@ -126,12 +130,13 @@ const Register = () => {
                   minLength="6"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-2.5 text-text focus:outline-none focus:border-accent transition-colors pr-10"
+                  className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none pr-12"
+                  placeholder="At least 6 characters"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-accent transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -139,7 +144,7 @@ const Register = () => {
             </div>
             
             <div>
-              <label className="block text-sm text-text-muted mb-2">Confirm Password</label>
+              <label className="block text-sm text-text-muted mb-2 font-medium">Confirm Password</label>
               <div className="relative">
                 <input 
                   type={showConfirmPassword ? "text" : "password"} 
@@ -148,31 +153,32 @@ const Register = () => {
                   minLength="6"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full bg-transparent border border-white/20 rounded-md px-4 py-2.5 text-text focus:outline-none focus:border-accent transition-colors pr-10"
+                  className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none pr-12"
+                  placeholder="Repeat your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-accent transition-colors"
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+            {error && <p className="text-red-400 text-sm text-center font-medium bg-red-400/10 py-2 rounded-lg border border-red-400/20">{error}</p>}
 
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-accent text-primary px-8 py-3 rounded-full font-semibold hover:bg-accent-hover transition-colors mt-2"
+              className="w-full bg-accent text-primary px-8 py-3.5 rounded-xl font-bold hover:bg-accent-hover hover:scale-[1.02] shadow-lg hover:shadow-accent/20 transition-all duration-300 mt-4"
             >
               {loading ? 'Registering...' : 'Register'}
             </button>
           </form>
 
           <p className="text-center text-text-muted mt-8 text-sm">
-            Already have an account? <Link to="/login" state={{ from: location.state?.from }} className="text-accent hover:underline font-medium">Login</Link>
+            Already have an account? <Link to="/login" state={{ from: location.state?.from }} className="text-accent hover:underline font-medium transition-colors">Login</Link>
           </p>
         </div>
       </div>

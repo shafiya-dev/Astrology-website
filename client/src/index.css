@@ -26,6 +26,62 @@
   }
 }
 
+@layer utilities {
+  .glass-card {
+    background: rgba(53, 32, 85, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+  .glass-input {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+  .glass-input:focus {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 12px rgba(227, 181, 42, 0.15);
+  }
+
+  .cosmic-bg {
+    position: relative;
+    background-color: var(--color-primary);
+    background-image: url('/assets/cosmic-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: 0;
+  }
+  .cosmic-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(30, 19, 56, 0.85), rgba(30, 19, 56, 0.95));
+    z-index: -1;
+    pointer-events: none;
+  }
+  .cosmic-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 15% 25%, rgba(227, 181, 42, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(227, 181, 42, 0.04) 0%, transparent 40%);
+    z-index: -1;
+    pointer-events: none;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
 .hero-circle {
   position: absolute;
   bottom: 0;

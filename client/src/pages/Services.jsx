@@ -34,7 +34,7 @@ const Services = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="pt-24 pb-24 min-h-screen"
+      className="pt-24 pb-24 min-h-screen cosmic-bg"
     >
       <div className="max-w-6xl mx-auto px-6">
         <motion.div 
@@ -58,7 +58,7 @@ const Services = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ scale: 1.02, boxShadow: "0 10px 30px -10px rgba(212, 169, 74, 0.2)" }}
-              className="bg-card-bg p-10 rounded-2xl flex flex-col justify-center border border-transparent hover:border-accent/30 transition-colors"
+              className="glass-card p-10 rounded-2xl flex flex-col justify-center transition-all"
             >
               <h3 className="text-2xl font-semibold mb-4 text-accent">{service.title}</h3>
               <p className="text-text-muted leading-relaxed mb-6">{service.desc}</p>

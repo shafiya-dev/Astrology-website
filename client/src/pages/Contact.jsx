@@ -93,7 +93,7 @@ const Contact = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="pt-24 pb-24 min-h-screen"
+      className="pt-24 pb-24 min-h-screen cosmic-bg"
     >
       <div className="max-w-6xl mx-auto px-6">
         <motion.div 
@@ -115,7 +115,7 @@ const Contact = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="flex-1"
+            className="flex-1 glass-card p-8 md:p-12 rounded-3xl"
           >
             <h2 className="text-2xl font-bold mb-8">Send a Message</h2>
             
@@ -195,7 +195,7 @@ const Contact = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="flex-1 pt-2 md:pt-16"
+            className="flex-1 glass-card p-8 md:p-12 rounded-3xl h-fit"
           >
             <div className="space-y-8">
               <div>
@@ -210,9 +210,14 @@ const Contact = () => {
 
               <div>
                 <h4 className="text-xs font-semibold text-accent uppercase mb-1">STUDIO ADDRESS</h4>
-                <p className="text-text leading-relaxed">
+                <a 
+                  href="https://maps.google.com/?q=204,+Om+Sai+Complex,+College+Road,+Nashik,+Maharashtra" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-text hover:text-accent transition-colors block cursor-pointer"
+                >
                   204, Om Sai Complex, College Road, Nashik,<br />Maharashtra
-                </p>
+                </a>
               </div>
 
               <div>
@@ -227,7 +232,7 @@ const Contact = () => {
       {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-          <div className="bg-card-bg border border-white/10 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
+          <div className="glass-card rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
             <h3 className="text-2xl font-bold mb-4 text-white">Login Required</h3>
             <p className="text-text-muted mb-8 text-lg">
               Please log in to your account before sending a message.

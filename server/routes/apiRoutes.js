@@ -15,8 +15,9 @@ router.post('/admin/reply', auth, apiController.replyLead);
 
 router.get('/notifications', auth, apiController.getNotifications);
 
-router.post('/change-password', auth, apiController.changePassword);
-
+router.post('/forgot-password/send-otp', apiController.sendOtp);
+router.post('/forgot-password/verify-otp', apiController.verifyOtp);
+router.post('/forgot-password/reset', apiController.resetPassword);
 router.post('/seed', apiController.seedDatabase);
 
 module.exports = router;
