@@ -15,7 +15,7 @@ const Testimonial = () => {
   const [testimonials, setTestimonials] = useState(fallbackTestimonials);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/testimonials')
+    fetch('https://astrology-backend-xhfi.onrender.com/api/testimonials')
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {

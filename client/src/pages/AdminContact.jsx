@@ -17,7 +17,7 @@ const AdminContact = () => {
   const [viewMessage, setViewMessage] = useState(null);
 
   const fetchLeads = () => {
-    fetch('http://localhost:5000/api/admin/leads', {
+    fetch('https://astrology-backend-xhfi.onrender.com/api/admin/leads', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     })
       .then(res => {
@@ -44,7 +44,7 @@ const AdminContact = () => {
     if (!window.confirm('Are you sure you want to permanently delete this message?')) return;
     
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/leads/${id}`, {
+      const res = await fetch(`https://astrology-backend-xhfi.onrender.com/api/admin/leads/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
@@ -64,7 +64,7 @@ const AdminContact = () => {
     setReplyStatus('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/admin/reply', {
+      const res = await fetch('https://astrology-backend-xhfi.onrender.com/api/admin/reply', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

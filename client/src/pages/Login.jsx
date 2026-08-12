@@ -54,8 +54,8 @@ const Login = () => {
 
     try {
       const endpoint = formData.email === 'admin@gmail.com' 
-        ? 'http://localhost:5000/api/admin/login' 
-        : 'http://localhost:5000/api/login';
+        ? 'https://astrology-backend-xhfi.onrender.com/api/admin/login' 
+        : 'https://astrology-backend-xhfi.onrender.com/api/login';
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -95,7 +95,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/forgot-password/send-otp', {
+      const res = await fetch('https://astrology-backend-xhfi.onrender.com/api/forgot-password/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone })
@@ -119,7 +119,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/forgot-password/verify-otp', {
+      const res = await fetch('https://astrology-backend-xhfi.onrender.com/api/forgot-password/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, otp })
@@ -150,7 +150,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/forgot-password/reset', {
+      const res = await fetch('https://astrology-backend-xhfi.onrender.com/api/forgot-password/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, otp, newPassword })

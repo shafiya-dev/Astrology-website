@@ -19,7 +19,7 @@ const Account = () => {
 
   useEffect(() => {
     if (user) {
-      fetch('http://localhost:5000/api/notifications', {
+      fetch('https://astrology-backend-xhfi.onrender.com/api/notifications', {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       })
         .then(res => res.json())
