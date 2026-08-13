@@ -14,7 +14,10 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  connectionTimeout: 10000, // 10 seconds timeout to prevent hanging
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 });
 
 exports.submitContact = async (req, res) => {
@@ -118,7 +121,7 @@ exports.sendOtp = async (req, res) => {
     res.status(200).json({ message: 'OTP sent successfully' });
   } catch (error) {
     console.error('Send OTP error:', error);
-    res.status(500).json({ error: 'Failed to send OTP email. Please check configuration.' });
+    res.status(500).json({ message: 'Failed to send OTP email. Please verify your App Password.' });
   }
 };
 
