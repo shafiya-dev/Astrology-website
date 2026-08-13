@@ -10,12 +10,14 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
   },
-  connectionTimeout: 10000, // 10 seconds timeout to prevent hanging
+  connectionTimeout: 10000,
   greetingTimeout: 10000,
   socketTimeout: 10000,
 });
@@ -121,7 +123,7 @@ exports.sendOtp = async (req, res) => {
     res.status(200).json({ message: 'OTP sent successfully' });
   } catch (error) {
     console.error('Send OTP error:', error);
-    res.status(500).json({ message: 'Failed to send OTP email. Please verify your App Password.' });
+    res.status(500).json({ message: `Failed to send email. Error: ${error.message || 'Check App Password'}` });
   }
 };
 
