@@ -83,8 +83,35 @@ exports.sendOtp = async (req, res) => {
 
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // In a real app, send OTP via SMS here
-    console.log(`[MOCK SMS] OTP for ${phone} is: ${otpCode}`);
+    // Fast2SMS Integration
+    const apiKey = process.env.FAST2SMS_API_KEY;
+    
+    if (!apiKey) {
+      return res.status(500).json({ message: 'SMS Gateway not configured. Missing FAST2SMS_API_KEY environment variable.' });
+    }
+
+    try {
+      const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+        method: 'POST',
+        headers: {
+          'authorization': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          route: 'q',
+          message: `Your Aacharya Shwetaa Kapoor verification OTP is ${otpCode}. Do not share this with anyone.`,
+          numbers: phone
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.return) {
+        return res.status(500).json({ message: 'SMS provider error: ' + (data.message || 'Unknown error') });
+      }
+    } catch (smsError) {
+      console.error('SMS sending error:', smsError);
+      return res.status(500).json({ message: 'Failed to communicate with SMS provider' });
+    }
 
     await Otp.findOneAndDelete({ phone }); // Remove existing OTP
     await Otp.create({ phone, otp: otpCode });
