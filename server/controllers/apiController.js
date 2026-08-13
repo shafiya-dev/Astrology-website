@@ -7,6 +7,15 @@ const Notification = require('../models/Notification');
 const Otp = require('../models/Otp');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 exports.submitContact = async (req, res) => {
   try {
@@ -75,60 +84,50 @@ exports.userLogin = async (req, res) => {
 
 exports.sendOtp = async (req, res) => {
   try {
-    const { phone } = req.body;
-    if (!phone) return res.status(400).json({ message: 'Phone number is required' });
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email address is required' });
 
-    const user = await User.findOne({ phone }) || await Admin.findOne({ phone });
-    if (!user) return res.status(404).json({ message: 'No account found with this phone number' });
+    const user = await User.findOne({ email }) || await Admin.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'No account found with this email' });
 
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // Fast2SMS Integration
-    const apiKey = process.env.FAST2SMS_API_KEY;
-    
-    if (!apiKey) {
-      return res.status(500).json({ message: 'SMS Gateway not configured. Missing FAST2SMS_API_KEY environment variable.' });
-    }
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Your Password Reset OTP Code',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+          <h2 style="color: #E3B52A; text-align: center;">Password Reset</h2>
+          <p style="font-size: 16px;">Hello,</p>
+          <p style="font-size: 16px;">You requested a password reset. Your OTP code is:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <span style="font-size: 28px; font-weight: bold; background: #352055; color: #fff; padding: 10px 20px; border-radius: 8px; letter-spacing: 5px;">${otpCode}</span>
+          </div>
+          <p style="font-size: 14px; color: #777;">This code is valid for 5 minutes. If you didn't request this, you can safely ignore this email.</p>
+        </div>
+      `
+    };
 
-    try {
-      const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
-        method: 'POST',
-        headers: {
-          'authorization': apiKey,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          route: 'q',
-          message: `Your Aacharya Shwetaa Kapoor verification OTP is ${otpCode}. Do not share this with anyone.`,
-          numbers: phone
-        })
-      });
+    await transporter.sendMail(mailOptions);
+    console.log(`[Email OTP] Sent to ${email}`);
 
-      const data = await response.json();
-      if (!response.ok || !data.return) {
-        return res.status(500).json({ message: 'SMS provider error: ' + (data.message || 'Unknown error') });
-      }
-    } catch (smsError) {
-      console.error('SMS sending error:', smsError);
-      return res.status(500).json({ message: 'Failed to communicate with SMS provider' });
-    }
-
-    await Otp.findOneAndDelete({ phone }); // Remove existing OTP
-    await Otp.create({ phone, otp: otpCode });
+    await Otp.findOneAndDelete({ email }); // Remove existing OTP
+    await Otp.create({ email, otp: otpCode });
 
     res.status(200).json({ message: 'OTP sent successfully' });
   } catch (error) {
     console.error('Send OTP error:', error);
-    res.status(500).json({ error: 'Failed to send OTP' });
+    res.status(500).json({ error: 'Failed to send OTP email. Please check configuration.' });
   }
 };
 
 exports.verifyOtp = async (req, res) => {
   try {
-    const { phone, otp } = req.body;
-    if (!phone || !otp) return res.status(400).json({ message: 'Phone and OTP are required' });
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ message: 'Email and OTP are required' });
 
-    const existingOtp = await Otp.findOne({ phone, otp });
+    const existingOtp = await Otp.findOne({ email, otp });
     if (!existingOtp) return res.status(400).json({ message: 'Invalid or expired OTP' });
 
     res.status(200).json({ message: 'OTP verified successfully' });
@@ -139,21 +138,21 @@ exports.verifyOtp = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   try {
-    const { phone, otp, newPassword } = req.body;
+    const { email, otp, newPassword } = req.body;
     
-    if (!phone || !otp || !newPassword) {
+    if (!email || !otp || !newPassword) {
       return res.status(400).json({ message: 'All fields are required' });
     }
     if (newPassword.length < 6) {
       return res.status(400).json({ message: 'New password must be at least 6 characters long' });
     }
 
-    const existingOtp = await Otp.findOne({ phone, otp });
+    const existingOtp = await Otp.findOne({ email, otp });
     if (!existingOtp) {
       return res.status(400).json({ message: 'Invalid or expired OTP' });
     }
 
-    let account = await User.findOne({ phone }) || await Admin.findOne({ phone });
+    let account = await User.findOne({ email }) || await Admin.findOne({ email });
     if (!account) return res.status(404).json({ message: 'Account not found' });
 
     account.password = await bcrypt.hash(newPassword, 10);

@@ -10,8 +10,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   
   // Forgot Password State
-  const [step, setStep] = useState('login'); // 'login' | 'forgot-phone' | 'forgot-otp' | 'forgot-reset'
-  const [phone, setPhone] = useState('');
+  const [step, setStep] = useState('login'); // 'login' | 'forgot-email' | 'forgot-otp' | 'forgot-reset'
+  const [forgotEmail, setForgotEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -88,8 +88,8 @@ const Login = () => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     
-    if (!/^[6-9]\d{9}$/.test(phone)) {
-      toast.error('Please enter a valid 10-digit Indian mobile number');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotEmail)) {
+      toast.error('Please enter a valid email address');
       return;
     }
 
@@ -98,13 +98,13 @@ const Login = () => {
       const res = await fetch('https://astrology-backend-xhfi.onrender.com/api/forgot-password/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone })
+        body: JSON.stringify({ email: forgotEmail })
       });
       const data = await res.json();
       if (res.ok) {
         setStep('forgot-otp');
         setTimer(60);
-        toast.success('OTP has been sent to your mobile number.');
+        toast.success('OTP has been sent to your email address.');
       } else {
         toast.error(data.message || 'Failed to send OTP');
       }
@@ -122,7 +122,7 @@ const Login = () => {
       const res = await fetch('https://astrology-backend-xhfi.onrender.com/api/forgot-password/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, otp })
+        body: JSON.stringify({ email: forgotEmail, otp })
       });
       const data = await res.json();
       if (res.ok) {
@@ -153,13 +153,13 @@ const Login = () => {
       const res = await fetch('https://astrology-backend-xhfi.onrender.com/api/forgot-password/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, otp, newPassword })
+        body: JSON.stringify({ email: forgotEmail, otp, newPassword })
       });
       const data = await res.json();
       if (res.ok) {
         toast.success('Password reset successfully! You can now login.');
         setStep('login');
-        setPhone('');
+        setForgotEmail('');
         setOtp('');
         setNewPassword('');
         setConfirmPassword('');
@@ -175,7 +175,7 @@ const Login = () => {
 
   const cancelForgotFlow = () => {
     setStep('login');
-    setPhone('');
+    setForgotEmail('');
     setOtp('');
     setNewPassword('');
     setConfirmPassword('');
@@ -210,7 +210,7 @@ const Login = () => {
                 <div>
                   <div className="flex justify-between mb-2">
                     <label className="block text-sm text-text-muted font-medium">Password</label>
-                    <button type="button" onClick={() => { setStep('forgot-phone'); }} className="text-xs text-accent hover:underline transition-colors">Forgot Password?</button>
+                    <button type="button" onClick={() => { setStep('forgot-email'); }} className="text-xs text-accent hover:underline transition-colors">Forgot Password?</button>
                   </div>
                   <div className="relative">
                     <input 
@@ -248,22 +248,21 @@ const Login = () => {
             </div>
           )}
 
-          {step === 'forgot-phone' && (
+          {step === 'forgot-email' && (
             <div className="animate-fade-in">
               <h2 className="text-2xl font-bold text-center mb-2">Forgot Password</h2>
-              <p className="text-text-muted text-center text-sm mb-8">Enter your registered mobile number to receive an OTP.</p>
+              <p className="text-text-muted text-center text-sm mb-8">Enter your registered email address to receive an OTP.</p>
               
               <form onSubmit={handleSendOtp} className="space-y-6">
                 <div>
-                  <label className="block text-sm text-text-muted mb-2 font-medium">Mobile Number</label>
+                  <label className="block text-sm text-text-muted mb-2 font-medium">Email Address</label>
                   <input 
-                    type="tel" 
+                    type="email" 
                     required
-                    maxLength="10"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
                     className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none"
-                    placeholder="e.g. 9876543210"
+                    placeholder="e.g. hello@example.com"
                   />
                 </div>
 
@@ -290,7 +289,7 @@ const Login = () => {
           {step === 'forgot-otp' && (
             <div className="animate-fade-in">
               <h2 className="text-2xl font-bold text-center mb-2">Verify OTP</h2>
-              <p className="text-text-muted text-center text-sm mb-8">Enter the 6-digit code sent to <span className="text-accent font-semibold">{phone}</span></p>
+              <p className="text-text-muted text-center text-sm mb-8">Enter the 6-digit code sent to <span className="text-accent font-semibold">{forgotEmail}</span></p>
               
               <form onSubmit={handleVerifyOtp} className="space-y-6">
                 <div>
