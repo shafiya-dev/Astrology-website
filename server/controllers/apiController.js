@@ -8,6 +8,10 @@ const Otp = require('../models/Otp');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
+const dns = require('dns');
+
+// Force Node.js to use IPv4 instead of IPv6 to fix ENETUNREACH on Render
+dns.setDefaultResultOrder('ipv4first');
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
