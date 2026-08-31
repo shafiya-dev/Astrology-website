@@ -217,7 +217,9 @@ const Login = () => {
                       type={showPassword ? "text" : "password"} 
                       name="password" 
                       required
-                      minLength="6"
+                      pattern="(?=.*\d)(?=.*[!@#$%^&*]).{6,}"
+                      onInvalid={(e) => e.target.setCustomValidity('Password must be at least 6 characters with at least one number and one special character')}
+                      onInput={(e) => e.target.setCustomValidity('')}
                       value={formData.password}
                       onChange={handleChange}
                       className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none pr-12"
@@ -348,9 +350,10 @@ const Login = () => {
                     <input 
                       type={showNewPassword ? "text" : "password"} 
                       required
-                      minLength="6"
+                      pattern="(?=.*\d)(?=.*[!@#$%^&*]).{6,}"
+                      onInvalid={(e) => e.target.setCustomValidity('Password must be at least 6 characters with at least one number and one special character')}
+                      onInput={(e) => { e.target.setCustomValidity(''); setNewPassword(e.target.value); }}
                       value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
                       className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none pr-12"
                       placeholder="At least 6 characters"
                     />
@@ -369,9 +372,10 @@ const Login = () => {
                     <input 
                       type={showConfirmPassword ? "text" : "password"} 
                       required
-                      minLength="6"
+                      pattern="(?=.*\d)(?=.*[!@#$%^&*]).{6,}"
+                      onInvalid={(e) => e.target.setCustomValidity('Password must be at least 6 characters with at least one number and one special character')}
+                      onInput={(e) => { e.target.setCustomValidity(''); setConfirmPassword(e.target.value); }}
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
                       className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none pr-12"
                       placeholder="Repeat password"
                     />

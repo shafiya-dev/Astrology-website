@@ -113,8 +113,10 @@ const Register = () => {
                 type="tel" 
                 name="phone" 
                 required
+                pattern="^[7-9]\d{9}$"
+                onInvalid={(e) => e.target.setCustomValidity('Please enter a valid 10-digit Indian mobile number')}
+                onInput={(e) => { e.target.setCustomValidity(''); handleChange(e); }}
                 value={formData.phone}
-                onChange={handleChange}
                 className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none"
                 placeholder="10-digit mobile number"
               />
@@ -127,7 +129,9 @@ const Register = () => {
                   type={showPassword ? "text" : "password"} 
                   name="password" 
                   required
-                  minLength="6"
+                  pattern="(?=.*\d)(?=.*[!@#$%^&*]).{6,}"
+                  onInvalid={(e) => e.target.setCustomValidity('Password must be at least 6 characters with at least one number and one special character')}
+                  onInput={(e) => e.target.setCustomValidity('')}
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none pr-12"
@@ -150,7 +154,9 @@ const Register = () => {
                   type={showConfirmPassword ? "text" : "password"} 
                   name="confirmPassword" 
                   required
-                  minLength="6"
+                  pattern="(?=.*\d)(?=.*[!@#$%^&*]).{6,}"
+                  onInvalid={(e) => e.target.setCustomValidity('Password must be at least 6 characters with at least one number and one special character')}
+                  onInput={(e) => e.target.setCustomValidity('')}
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className="w-full glass-input rounded-xl px-4 py-3 text-text outline-none pr-12"
