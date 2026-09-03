@@ -91,16 +91,18 @@ const AdminBookings = () => {
   return (
     <div className="min-h-screen bg-primary pt-28 pb-20 px-4 md:px-8 cosmic-bg relative">
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="flex justify-between items-end mb-8">
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-heading font-bold text-accent mb-4">Admin Dashboard</h1>
-            <div className="flex gap-4 mb-4 border-b border-white/10 pb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Admin Dashboard</h1>
+            <div className="flex gap-6 border-b border-white/10 mb-6">
               <a href="/admin/messages" className="text-text-muted hover:text-white transition-colors pb-1">Messages</a>
-              <a href="/admin/bookings" className="text-accent font-bold border-b-2 border-accent pb-1">Bookings</a>
+              <span className="text-accent border-b-2 border-accent pb-1 font-semibold">Bookings</span>
             </div>
-            <p className="text-text-muted">Manage your service consultation requests</p>
+            <p className="text-text-muted text-lg">
+              Manage your service consultation requests.
+            </p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg px-4 py-2">
+          <div className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 self-start md:self-end">
             <span className="text-accent font-bold text-xl">{bookings.length}</span>
             <span className="text-text-muted ml-2 text-sm">Total Bookings</span>
           </div>
@@ -118,27 +120,37 @@ const AdminBookings = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-white/5 text-accent text-xs md:text-sm uppercase tracking-wider border-b border-white/10">
-                    <th className="p-4 border-b border-white/10 font-semibold">Client</th>
-                    <th className="p-4 border-b border-white/10 font-semibold">Service</th>
-                    <th className="p-4 border-b border-white/10 font-semibold">Date & Time</th>
-                    <th className="p-4 border-b border-white/10 font-semibold">Status</th>
-                    <th className="p-4 border-b border-white/10 font-semibold text-right">Actions</th>
+                    <th className="p-4 border-b border-white/10 font-semibold whitespace-nowrap">Full Name</th>
+                    <th className="p-4 border-b border-white/10 font-semibold whitespace-nowrap">Phone Number</th>
+                    <th className="p-4 border-b border-white/10 font-semibold whitespace-nowrap">Email Address</th>
+                    <th className="p-4 border-b border-white/10 font-semibold whitespace-nowrap">Service</th>
+                    <th className="p-4 border-b border-white/10 font-semibold whitespace-nowrap">Date / Time</th>
+                    <th className="p-4 border-b border-white/10 font-semibold whitespace-nowrap">Status</th>
+                    <th className="p-4 border-b border-white/10 font-semibold text-right whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {bookings.map((booking, index) => (
                     <tr key={booking._id || index} className="hover:bg-white/10 transition-colors group">
-                      <td className="p-4">
-                        <p className="font-bold text-white whitespace-nowrap">{booking.name}</p>
-                        <p className="text-sm text-text-muted whitespace-nowrap">{booking.email}</p>
-                        <p className="text-sm text-text-muted whitespace-nowrap">{booking.phone}</p>
+                      <td className="p-4 text-sm font-medium text-white whitespace-nowrap">
+                        {booking.name}
                       </td>
-                      <td className="p-4">
-                        <p className="text-white whitespace-nowrap">{booking.service}</p>
-                        <p className="text-sm text-accent whitespace-nowrap">₹{getServiceInfo(booking.service).price}</p>
+                      <td className="p-4 text-sm text-text-muted whitespace-nowrap">
+                        {booking.phone}
                       </td>
-                      <td className="p-4">
-                        <p className="text-white flex items-center gap-2 whitespace-nowrap"><Calendar className="w-4 h-4 text-text-muted" /> {booking.preferredDateTime}</p>
+                      <td className="p-4 text-sm text-accent whitespace-nowrap">
+                        {booking.email}
+                      </td>
+                      <td className="p-4 text-sm text-white whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <span>{booking.service}</span>
+                          <span className="text-xs text-text-muted">₹{getServiceInfo(booking.service).price}</span>
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm text-text-muted whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-3.5 h-3.5 text-accent" /> {booking.preferredDateTime}
+                        </div>
                       </td>
                       <td className="p-4 whitespace-nowrap">
                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${

@@ -224,6 +224,17 @@ exports.updateBookingStatus = async (req, res) => {
       text: emailText
     };
 
+    // Create in-app notification
+    const notification = new Notification({
+      userEmail: booking.email.toLowerCase(),
+      title: status === 'Accepted' ? 'Booking Request Accepted' : 'Booking Request Declined',
+      message: status === 'Accepted' 
+        ? `Your booking for ${booking.service} on ${booking.preferredDateTime} has been accepted.` 
+        : `Your booking request for ${booking.service} on ${booking.preferredDateTime} has been declined.`,
+      type: 'booking_update'
+    });
+    await notification.save();
+
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error('Error sending booking notification email:', error);
@@ -330,8 +341,11 @@ exports.replyLead = async (req, res) => {
 
 exports.getNotifications = async (req, res) => {
   try {
-    const userEmail = req.admin.email; // From auth middleware
-    const notifications = await Notification.find({ userEmail }).sort({ createdAt: -1 });
+    // Use explicitly requested email from query, or fallback to the token's email
+    const userEmail = req.query.email || req.admin.email; 
+    const notifications = await Notification.find({ 
+      userEmail: new RegExp(`^${userEmail}$`, 'i') 
+    }).sort({ createdAt: -1 });
     res.status(200).json(notifications);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch notifications' });

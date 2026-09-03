@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Mail, User, Clock, CheckCircle } from 'lucide-react';
+import { Bell, Mail, User, Clock, CheckCircle, XCircle, MessageSquare } from 'lucide-react';
 
 const Account = () => {
   const [user, setUser] = useState(null);
@@ -18,8 +18,8 @@ const Account = () => {
   }, [navigate]);
 
   useEffect(() => {
-    if (user) {
-      fetch('https://astrology-backend-xhfi.onrender.com/api/notifications', {
+    if (user && user.email) {
+      fetch(`https://astrology-backend-xhfi.onrender.com/api/notifications?email=${encodeURIComponent(user.email)}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       })
         .then(res => res.json())
@@ -75,27 +75,49 @@ const Account = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {notifications.map(notif => (
-                <div key={notif._id} className="bg-card-bg border border-white/10 rounded-2xl p-6 shadow-lg hover:border-white/20 transition-colors">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-1">
-                      <Bell size={20} className="text-accent" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
-                        <h4 className="text-white font-semibold text-lg">Message from Admin</h4>
-                        <div className="flex items-center text-xs text-text-muted gap-1">
-                          <Clock size={14} />
-                          <span>{new Date(notif.createdAt).toLocaleString()}</span>
-                        </div>
+              {notifications.map(notif => {
+                const isBookingUpdate = notif.type === 'booking_update';
+                const isSuccess = isBookingUpdate && notif.title === 'Booking Request Accepted' || notif.type === 'success';
+                const isError = isBookingUpdate && notif.title === 'Booking Request Declined' || notif.type === 'error';
+                
+                let Icon = Bell;
+                if (isSuccess) Icon = CheckCircle;
+                if (isError) Icon = XCircle;
+                if (!notif.type || notif.type === 'info') Icon = MessageSquare;
+
+                return (
+                  <div key={notif._id} className="bg-card-bg border border-white/10 rounded-2xl p-6 shadow-lg hover:border-white/20 transition-colors">
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 mt-1 ${
+                        isSuccess ? 'bg-green-500/10' : isError ? 'bg-red-500/10' : 'bg-accent/10'
+                      }`}>
+                        <Icon size={24} className={isSuccess ? 'text-green-400' : isError ? 'text-red-400' : 'text-accent'} />
                       </div>
-                      <p className="text-text-muted whitespace-pre-wrap leading-relaxed">
-                        {notif.message}
-                      </p>
+                      <div className="flex-1 w-full">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-2">
+                          <h4 className="text-white font-semibold text-lg">{notif.title || 'Message from Admin'}</h4>
+                          <div className="flex items-center text-xs text-text-muted gap-1 shrink-0">
+                            <Clock size={14} />
+                            <span>{new Date(notif.createdAt).toLocaleString()}</span>
+                          </div>
+                        </div>
+                        {isBookingUpdate && (
+                          <div className="mb-3">
+                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${
+                              isSuccess ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'
+                            }`}>
+                              {isSuccess ? 'Accepted' : 'Cancelled'}
+                            </span>
+                          </div>
+                        )}
+                        <p className="text-text-muted whitespace-pre-wrap leading-relaxed text-sm md:text-base">
+                          {notif.message}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
