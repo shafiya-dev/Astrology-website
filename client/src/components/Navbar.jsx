@@ -80,7 +80,7 @@ const Navbar = () => {
               Admin Dashboard
             </NavLink>
           ) : (
-            <NavLink to="/contact" className="bg-accent text-primary px-6 py-2.5 rounded-full font-semibold hover:bg-accent-hover hover:scale-105 hover:shadow-[0_0_15px_rgba(227,181,42,0.4)] active:scale-95 transition-all duration-300 text-sm ml-4">
+            <NavLink to="/book" className="bg-accent text-primary px-6 py-2.5 rounded-full font-semibold hover:bg-accent-hover hover:scale-105 hover:shadow-[0_0_15px_rgba(227,181,42,0.4)] active:scale-95 transition-all duration-300 text-sm ml-4">
               Book Consultation
             </NavLink>
           )}
@@ -152,7 +152,7 @@ const Navbar = () => {
               Admin Dashboard
             </NavLink>
           ) : (
-            <NavLink to="/contact" onClick={() => setIsOpen(false)} className="bg-accent text-primary px-8 py-3 rounded-full font-semibold">
+            <NavLink to="/book" onClick={() => setIsOpen(false)} className="bg-accent text-primary px-8 py-3 rounded-full font-semibold">
               Book Consultation
             </NavLink>
           )}

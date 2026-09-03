@@ -188,6 +188,55 @@ exports.submitBooking = async (req, res) => {
   }
 };
 
+exports.updateBookingStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['Accepted', 'Rejected'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    const booking = await Booking.findById(id);
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    booking.status = status;
+    await booking.save();
+
+    // Send email notification
+    let emailSubject = '';
+    let emailText = '';
+    
+    if (status === 'Accepted') {
+      emailSubject = 'Your Booking is Confirmed - Aacharya Shwetaa Kapoor';
+      emailText = `Dear ${booking.name},\n\nGreat news! Your booking request for ${booking.service} on ${booking.preferredDateTime} has been accepted.\n\nWe look forward to connecting with you soon.\n\nWarm regards,\nAacharya Shwetaa Kapoor`;
+    } else {
+      emailSubject = 'Update on Your Booking Request - Aacharya Shwetaa Kapoor';
+      emailText = `Dear ${booking.name},\n\nThank you for your interest. Unfortunately, we are unable to accommodate your booking request for ${booking.service} on ${booking.preferredDateTime} at this time.\n\nPlease feel free to request a different slot.\n\nWarm regards,\nAacharya Shwetaa Kapoor`;
+    }
+
+    const mailOptions = {
+      from: `"Aacharya Shwetaa Kapoor" <${process.env.EMAIL_USER}>`,
+      to: booking.email,
+      subject: emailSubject,
+      text: emailText
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending booking notification email:', error);
+      }
+    });
+
+    res.status(200).json({ message: `Booking ${status.toLowerCase()} successfully`, booking });
+  } catch (error) {
+    console.error('Error updating booking status:', error);
+    res.status(500).json({ error: 'Failed to update booking status' });
+  }
+};
+
 exports.getTestimonials = async (req, res) => {
   try {
     const testimonials = await Testimonial.find();

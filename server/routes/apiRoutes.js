@@ -12,6 +12,7 @@ router.post('/admin/login', apiController.adminLogin);
 router.get('/admin/leads', auth, apiController.getLeads);
 router.delete('/admin/leads/:id', auth, apiController.deleteLead);
 router.post('/admin/reply', auth, apiController.replyLead);
+router.put('/admin/bookings/:id/status', auth, apiController.updateBookingStatus);
 
 router.get('/notifications', auth, apiController.getNotifications);
 

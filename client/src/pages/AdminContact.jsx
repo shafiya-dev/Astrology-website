@@ -91,10 +91,14 @@ const AdminContact = () => {
   };
 
   return (
-    <div className="pt-24 pb-24 min-h-screen">
-      <div className="max-w-7xl mx-auto px-6">
+    <div className="pt-24 pb-24 min-h-screen cosmic-bg relative">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">Admin Dashboard</h1>
+          <div className="flex gap-4 mb-6 border-b border-white/10 pb-4">
+            <a href="/admin/messages" className="text-accent font-bold border-b-2 border-accent pb-1">Messages</a>
+            <a href="/admin/bookings" className="text-text-muted hover:text-white transition-colors pb-1">Bookings</a>
+          </div>
           <p className="text-text-muted text-lg">
             View all client contact inquiries stored in the database.
           </p>

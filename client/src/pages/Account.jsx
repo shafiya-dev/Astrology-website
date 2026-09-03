@@ -39,8 +39,8 @@ const Account = () => {
   if (!user) return null;
 
   return (
-    <div className="pt-32 pb-24 min-h-screen bg-primary">
-      <div className="max-w-4xl mx-auto px-6">
+    <div className="pt-32 pb-24 min-h-screen bg-primary cosmic-bg relative">
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
         
         {/* Profile Header */}
         <div className="bg-card-bg border border-white/10 rounded-3xl p-8 mb-8 flex flex-col md:flex-row items-center md:items-start gap-8 shadow-xl">

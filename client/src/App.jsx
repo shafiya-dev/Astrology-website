@@ -14,6 +14,8 @@ import AdminContact from './pages/AdminContact';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Account from './pages/Account';
+import Book from './pages/Book';
+import AdminBookings from './pages/AdminBookings';
 
 const AdminRoute = ({ children }) => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -91,6 +93,12 @@ function App() {
                   <AdminContact />
                 </AdminRoute>
               } />
+              <Route path="/admin/bookings" element={
+                <AdminRoute>
+                  <AdminBookings />
+                </AdminRoute>
+              } />
+              <Route path="/book" element={<Book />} />
             </Routes>
           </main>
           <Footer />
