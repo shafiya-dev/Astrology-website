@@ -163,7 +163,7 @@ const AdminContact = () => {
                         </button>
                         <button 
                           onClick={() => {
-                            setReplyData({ userEmail: msg.email, message: '' });
+                            setReplyData({ userEmail: msg.email, message: '', originalMessage: msg.message });
                             setShowReplyModal(true);
                           }}
                           className="p-2 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-all inline-flex items-center"
@@ -275,10 +275,10 @@ const AdminContact = () => {
               </button>
               <button 
                 onClick={() => {
-                  setShowViewModal(false);
-                  setReplyData({ userEmail: viewMessage.email, message: '' });
-                  setShowReplyModal(true);
-                }}
+                    setShowViewModal(false);
+                    setReplyData({ userEmail: viewMessage.email, message: '', originalMessage: viewMessage.message });
+                    setShowReplyModal(true);
+                  }}
                 className="px-6 py-2.5 rounded-full font-semibold bg-accent text-primary hover:bg-accent-hover transition-colors shadow-lg hover:shadow-accent/20 flex items-center gap-2"
               >
                 <Reply size={18} /> Reply

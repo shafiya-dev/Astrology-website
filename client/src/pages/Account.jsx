@@ -110,7 +110,14 @@ const Account = () => {
                             </span>
                           </div>
                         )}
+                        {notif.originalMessage && (
+                          <div className="mb-4 bg-white/5 border-l-4 border-accent/50 p-3 rounded-r-lg">
+                            <p className="text-xs text-accent mb-1 font-semibold uppercase tracking-wider">Your Inquiry</p>
+                            <p className="text-sm text-white/80 italic">"{notif.originalMessage}"</p>
+                          </div>
+                        )}
                         <p className="text-text-muted whitespace-pre-wrap leading-relaxed text-sm md:text-base">
+                          {notif.originalMessage && <span className="block text-xs text-white/50 mb-1 font-semibold uppercase tracking-wider">Admin Reply</span>}
                           {notif.message}
                         </p>
                       </div>

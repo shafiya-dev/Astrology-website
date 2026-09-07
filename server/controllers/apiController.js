@@ -330,8 +330,12 @@ exports.replyLead = async (req, res) => {
     if (req.admin.role !== 'admin') {
       return res.status(403).json({ message: 'Unauthorized' });
     }
-    const { userEmail, message } = req.body;
-    const notification = new Notification({ userEmail, message });
+    const { userEmail, message, originalMessage } = req.body;
+    const notification = new Notification({ 
+      userEmail, 
+      message,
+      originalMessage 
+    });
     await notification.save();
     res.status(201).json({ message: 'Reply sent successfully' });
   } catch (error) {
