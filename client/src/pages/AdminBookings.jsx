@@ -69,7 +69,7 @@ const AdminBookings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-primary pt-28 pb-20 px-4 md:px-8 flex justify-center items-center cosmic-bg relative">
+      <div className="pt-24 pb-24 min-h-screen cosmic-bg relative flex justify-center items-center">
         <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin relative z-10"></div>
       </div>
     );
@@ -77,7 +77,7 @@ const AdminBookings = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-primary pt-28 pb-20 px-4 md:px-8 flex justify-center items-center cosmic-bg relative">
+      <div className="pt-24 pb-24 min-h-screen cosmic-bg relative flex justify-center items-center">
         <div className="glass-card p-8 rounded-2xl text-center border-red-500 border relative z-10">
           <p className="text-red-400">{error}</p>
           <button onClick={fetchLeads} className="mt-4 px-6 py-2 bg-accent text-primary font-bold rounded-lg hover:bg-accent-hover transition-colors">
@@ -89,20 +89,20 @@ const AdminBookings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-primary pt-28 pb-20 px-4 md:px-8 cosmic-bg relative">
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="pt-24 pb-24 min-h-screen cosmic-bg relative">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="mb-12 flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Admin Dashboard</h1>
-            <div className="flex gap-6 border-b border-white/10 mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">Admin Dashboard</h1>
+            <div className="flex gap-4 mb-6 border-b border-white/10 pb-4">
               <a href="/admin/messages" className="text-text-muted hover:text-white transition-colors pb-1">Messages</a>
-              <span className="text-accent border-b-2 border-accent pb-1 font-semibold">Bookings</span>
+              <span className="text-accent font-bold border-b-2 border-accent pb-1">Bookings</span>
             </div>
             <p className="text-text-muted text-lg">
               Manage your service consultation requests.
             </p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 self-start md:self-end">
+          <div className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 self-start mt-2">
             <span className="text-accent font-bold text-xl">{bookings.length}</span>
             <span className="text-text-muted ml-2 text-sm">Total Bookings</span>
           </div>
